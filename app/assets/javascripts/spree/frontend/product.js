@@ -102,9 +102,15 @@ Spree.ready(function () {
 
       var variantId = addToCartForm.elements.namedItem('variant_id').value
       var quantity = parseInt(addToCartForm.elements.namedItem('quantity').value, 10)
-      var frequency_id = addToCartForm.elements.namedItem('subscription[subscription_frequency_id]').value
-      var delivery_number = addToCartForm.elements.namedItem('subscription[delivery_number]').value
-      var subscribe = addToCartForm.elements.namedItem('subscribe').value
+
+      if (addToCartForm.elements.hasOwnProperty('cart') && addToCartForm.elements.cart.value === '.subscription_options'){
+        var frequency_id = addToCartForm.elements.namedItem('subscription[subscription_frequency_id]').value
+        var delivery_number = addToCartForm.elements.namedItem('subscription[delivery_number]').value
+        var subscribe = addToCartForm.elements.namedItem('subscribe').value
+        var subscription_fields = {frequency_id, delivery_number, subscribe}
+      }else{
+        var subscription_fields = {}
+      }
 
       // we need to ensure that we have an existing cart we want to add the item to
       // if we have already a cart assigned to this guest / user this won't create
@@ -114,7 +120,7 @@ Spree.ready(function () {
           SpreeAPI.Storefront.addToCart(
             variantId,
             quantity,
-            {frequency_id, delivery_number, subscribe}, // options hash - you can pass additional parameters here, your backend
+            subscription_fields, // options hash - you can pass additional parameters here, your backend
             // needs to be aware of those, see API docs:
             // https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
             function () {
